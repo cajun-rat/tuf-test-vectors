@@ -2,7 +2,6 @@
 
 import base64
 import binascii
-import ed25519
 import json
 import os
 import types
@@ -12,6 +11,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_PSS
 from os import path
 from securesystemslib.formats import encode_canonical as olpc_cjson
+from nacl.signing import SigningKey
+from nacl.encoding import HexEncoder
 
 from tuf_vectors import sha256, sha512, _cjson_subset_check, short_key_type
 
@@ -211,7 +212,9 @@ class Metadata(Helper):
         sigs = []
         for (priv, pub), bad_sig in sig_directives:
             if self.signature_scheme == 'ed25519':
-                priv = ed25519.SigningKey(binascii.unhexlify(priv))
+                # Hack to avoid https://github.com/uptane/tuf-test-vectors/issues/3
+                priv = priv[:64]
+                priv = SigningKey(priv, encoder=HexEncoder)
                 sig = priv.sign(data)
             elif self.signature_scheme.startswith('rsa'):
                 if self.signature_scheme == 'rsassa-pss-sha256':

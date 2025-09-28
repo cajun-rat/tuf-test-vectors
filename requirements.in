@@ -1,4 +1,4 @@
-ed25519
+pynacl
 Flask
 pycryptodome
 securesystemslib
