@@ -1,5 +1,5 @@
-FROM ubuntu:bionic
-LABEL Description="tuf-test-vector testing dockerfile for Ubuntu Bionic"
+FROM debian:trixie
+LABEL Description="tuf-test-vector testing dockerfile for Debian Trixie"
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -12,9 +12,10 @@ RUN apt-get update && apt-get -y install --no-install-suggests --no-install-reco
   python3-pip \
   python3-setuptools \
   python3-wheel \
-  python3-pytest
+  python3-pytest \
+  python3-flake8 \
+  python3-venv
 
-RUN pip3 install pip-tools virtualenv
 RUN useradd testuser
 
 ADD . /tuf-test-vectors

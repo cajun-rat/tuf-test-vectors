@@ -9,4 +9,5 @@ setup(
     author="heartsucker",
     author_email="heartsucker@autistici.org",
     description="Generates TUF/Uptane test vectors",
+    packages=["tuf_vectors"],
 )

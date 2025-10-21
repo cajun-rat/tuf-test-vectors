@@ -1,5 +1,4 @@
 .DEFAULT_GOAL := help
-OPEN=$(word 1, $(wildcard /usr/bin/xdg-open /usr/bin/open))
 
 .PHONY: help
 help: ## Print the help message
@@ -21,36 +20,25 @@ generate: init ## Generate Uptane test vectors
 
 .PHONY: init
 init: venv ## Initialize the environment
-	@. venv/bin/activate && \
+	. venv/bin/activate && \
+		pip install -e . && \
 		pip install -Ur requirements.txt && \
 		mkdir -p vectors
 
 .PHONY: init-dev
 init-dev: venv ## Initialize the dev environment
-	@. venv/bin/activate && \
+	. venv/bin/activate && \
 		pip install -Ur requirements-dev.txt
 
 TEST ?= 'tests/'
 .PHONY: test
 test: init-dev ## Run the test suite
-	@. venv/bin/activate && \
-		python -m pytest -v --cov tuf_vectors --cov-report html --cov-report term-missing $(TEST)
-
-.PHONY: update
-update: ## Update the requirements and virtualenv
-	@pip-compile -U requirements.in --output-file requirements.txt && \
-		pip-compile -U requirements-dev.in requirements.in --output-file requirements-dev.txt && \
-		$(MAKE) init
+	venv/bin/pytest -v
 
 venv: ## Create the virtualenv
-	@if [ ! -d venv ]; then virtualenv -p `which python3` venv; fi
+	@if [ ! -d venv ]; then python3 -m venv venv; fi
 
 
 .PHONY: lint
 lint: init-dev ## Lint the python files
-	@. venv/bin/activate && \
-		flake8
-
-.PHONY: open-coverage-report
-open-coverage-report: ## Open the coverage report in your browser
-	@$(OPEN) htmlcov/index.html
+	@python3 -m flake8
